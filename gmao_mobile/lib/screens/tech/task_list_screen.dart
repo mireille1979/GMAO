@@ -100,8 +100,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
                     child: CircleAvatar(
                       radius: 24,
                       backgroundColor: Colors.orange.withOpacity(0.2),
-                      backgroundImage: user?.photo != null ? NetworkImage('http://10.0.2.2:8080${user!.photo}') : null,
-                      child: user?.photo == null ? const Icon(Icons.person, color: Colors.orange) : null,
+                      child: const Icon(Icons.person, color: Colors.orange),
                     ),
                   ),
                 ],
