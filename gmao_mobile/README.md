@@ -47,9 +47,7 @@ La configuration de l'URL backend se trouve dans :
 
 ### Émulateur Android
 
-```dart
-return 'http://10.0.2.2:8081/api';
-```
+
 
 > `10.0.2.2` est un alias spécial de l'émulateur Android qui redirige vers le `localhost` du PC.
 
@@ -63,9 +61,7 @@ adb reverse tcp:8081 tcp:8081
 
 Puis dans `api_client.dart` :
 
-```dart
-return 'http://127.0.0.1:8081/api';
-```
+
 
 > ⚠️ **Important :** La commande `adb reverse` doit être refaite à chaque reconnexion du téléphone.
 
@@ -82,9 +78,7 @@ New-NetFirewallRule -DisplayName "GMAO Backend 8081" -Direction Inbound -Protoco
 
 4. Dans `api_client.dart` :
 
-```dart
-return 'http://192.168.x.x:8081/api';
-```
+
 
 ### Web (navigateur)
 
