@@ -1,8 +1,8 @@
-# 📱 GMAO Mobile
+# GMAO Mobile
 
 Application mobile Flutter pour la gestion de maintenance assistée par ordinateur (GMAO).
 
-## 📋 Technologies
+##  Technologies
 
 | Technologie | Version |
 |---|---|
@@ -13,7 +13,7 @@ Application mobile Flutter pour la gestion de maintenance assistée par ordinate
 | Google Fonts | ^8.0.1 (typographie) |
 | Table Calendar | ^3.1.2 (planning) |
 
-## ⚙️ Prérequis
+##  Prérequis
 
 1. **Flutter SDK** — [Installation Flutter](https://docs.flutter.dev/get-started/install)
 2. **Android Studio** ou **VS Code** avec les extensions Flutter/Dart
@@ -25,7 +25,7 @@ Vérifiez votre installation :
 flutter doctor
 ```
 
-## 🚀 Lancement
+##  Lancement
 
 ### 1. Installer les dépendances
 
@@ -40,14 +40,16 @@ flutter pub get
 flutter run
 ```
 
-## 📲 Connexion au backend selon l'appareil
+##  Connexion au backend selon l'appareil
 
 La configuration de l'URL backend se trouve dans :
 `lib/core/api_client.dart`
 
 ### Émulateur Android
 
-
+```dart
+return 'http://10.0.2.2:8081/api';
+```
 
 > `10.0.2.2` est un alias spécial de l'émulateur Android qui redirige vers le `localhost` du PC.
 
@@ -61,9 +63,11 @@ adb reverse tcp:8081 tcp:8081
 
 Puis dans `api_client.dart` :
 
+```dart
+return 'http://127.0.0.1:8081/api';
+```
 
-
-> ⚠️ **Important :** La commande `adb reverse` doit être refaite à chaque reconnexion du téléphone.
+>  **Important :** La commande `adb reverse` doit être refaite à chaque reconnexion du téléphone.
 
 ### Téléphone physique (WiFi uniquement)
 
@@ -78,7 +82,9 @@ New-NetFirewallRule -DisplayName "GMAO Backend 8081" -Direction Inbound -Protoco
 
 4. Dans `api_client.dart` :
 
-
+```dart
+return 'http://[IP_ADDRESS]/api';
+```
 
 ### Web (navigateur)
 
@@ -94,9 +100,9 @@ L'URL est automatiquement configurée sur `http://127.0.0.1:8081/api`.
 |---|---|---|
 | **Admin** | `admin@gmao.com` | `admin123` |
 | **Manager** | `manager1@gmail.com` | `manager123` |
-| **Technicien** | `tech1@gmail.com` | `tech123` |
+| **Technicien** | `tech2@gmail.com` | `tech123` |
 
-## 📁 Structure du projet
+##  Structure du projet
 
 ```
 gmao_mobile/
@@ -122,7 +128,7 @@ gmao_mobile/
 └── pubspec.yaml                  # Dépendances
 ```
 
-## 🧭 Rôles & navigation
+##  Rôles & navigation
 
 | Rôle | Écran principal | Fonctionnalités |
 |---|---|---|
@@ -131,7 +137,7 @@ gmao_mobile/
 | **Technicien** | Liste des tâches | Interventions assignées, planning, profil |
 | **Client** | Interface Client | Soumission de demandes |
 
-## 🛠️ Commandes utiles
+##  Commandes utiles
 
 ```bash
 # Analyser le code
@@ -157,12 +163,3 @@ flutter devices
 adb reverse tcp:8081 tcp:8081
 ```
 
-## ⚠️ Résolution de problèmes
-
-| Problème | Solution |
-|---|---|
-| `Connection timeout` sur téléphone | Vérifier `adb reverse tcp:8081 tcp:8081` ou l'IP dans `api_client.dart` |
-| `10.0.2.2` ne fonctionne pas | Cette adresse ne marche que sur l'**émulateur**, pas sur un vrai téléphone |
-| Erreur Gradle `InvalidPathException` | `flutter clean` + supprimer `android/.gradle/` + `flutter pub get` |
-| `Could not find a generator` | `flutter pub get` |
-| Écran blanc au lancement | Vérifier que le backend est démarré et accessible |
