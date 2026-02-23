@@ -20,6 +20,14 @@ class AppTheme {
     end: Alignment.bottomRight,
   );
 
+  // Technician Theme Colors
+  static const Color primaryOrange = Color(0xFFFF5722);
+  static const LinearGradient orangeGradient = LinearGradient(
+    colors: [Color(0xFFFF9800), Color(0xFFFF5722)],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+
   static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,

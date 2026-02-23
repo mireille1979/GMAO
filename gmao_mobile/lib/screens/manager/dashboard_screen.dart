@@ -164,7 +164,7 @@ class _DashboardHomeTabState extends State<_DashboardHomeTab> {
                     ),
                     const SizedBox(height: 4),
                     const Text(
-                      'Bonne journée !',
+                      'Bienvenue !',
                       style: TextStyle(
                         fontSize: 14,
                         color: AppTheme.textGrey,
@@ -310,8 +310,8 @@ class _DashboardHomeTabState extends State<_DashboardHomeTab> {
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 crossAxisCount: 2,
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
+                crossAxisSpacing: 15,
+                mainAxisSpacing: 15,
                 childAspectRatio: 1.6,
                 children: [
                   _buildStatCard(
@@ -396,31 +396,40 @@ class _DashboardHomeTabState extends State<_DashboardHomeTab> {
 
   Widget _buildStatCard(String title, String value, IconData icon, Color color, {bool isLight = false}) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(12), // Reduced padding
       decoration: BoxDecoration(
         color: isLight ? color.withOpacity(0.1) : Colors.white,
         borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, color: color, size: 28),
+          Icon(icon, color: color, size: 24), // Reduced icon size
           const Spacer(),
           Text(
             value,
             style: TextStyle(
-              fontSize: 24,
+              fontSize: 22, // Reduced font size
               fontWeight: FontWeight.bold,
               color: AppTheme.textDark,
               fontFamily: 'Poppins',
             ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 2), // Reduced spacing
            Text(
             title,
-            style: TextStyle(
-              fontSize: 12,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              fontSize: 11, // Reduced font size
               color: AppTheme.textGrey,
               fontFamily: 'Poppins',
             ),

@@ -22,7 +22,7 @@ class TaskListScreen extends StatefulWidget {
 }
 
 class _TaskListScreenState extends State<TaskListScreen> {
-  int _selectedIndex = 0;
+
 
   @override
   void initState() {
@@ -43,17 +43,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
     super.dispose();
   }
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-    // Navigation logic
-    if (index == 1) {
-       Navigator.push(context, MaterialPageRoute(builder: (_) => const TechPlanningScreen()));
-    } else if (index == 2) {
-       Navigator.push(context, MaterialPageRoute(builder: (_) => const ProfileScreen()));
-    }
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -192,29 +182,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
           ),
         ),
       ),
-      bottomNavigationBar: Container(
-        margin: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(30),
-          boxShadow: [
-             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
-              blurRadius: 20,
-              offset: const Offset(0, 5),
-            ),
-          ],
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            _buildNavItem(0, Icons.home_filled, 'Accueil', true),
-            _buildNavItem(1, Icons.calendar_month, 'Planning', false),
-            _buildNavItem(2, Icons.person, 'Profil', false),
-          ],
-        ),
-      ),
+
     );
   }
 
@@ -313,32 +281,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
     );
   }
 
-  Widget _buildNavItem(int index, IconData icon, String label, bool isActive) {
-    return GestureDetector(
-      onTap: () => _onItemTapped(index),
-      behavior: HitTestBehavior.opaque,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            icon,
-            color: isActive ? const Color(0xFFFF5722) : AppTheme.textGrey, // Orange active
-            size: 24,
-          ),
-          if (isActive)
-            Container(
-              margin: const EdgeInsets.only(top: 4),
-              width: 4,
-              height: 4,
-              decoration: const BoxDecoration(
-                color: Color(0xFFFF5722),
-                shape: BoxShape.circle,
-              ),
-            ),
-        ],
-      ),
-    );
-  }
+
 
   Color _getPriorityColor(Priorite priority) {
     switch (priority) {

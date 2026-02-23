@@ -4,13 +4,13 @@ import 'package:flutter/foundation.dart';
 
 class ApiClient {
   final Dio _dio = Dio();
-  // IMPORTANT: For Android Emulator use 10.0.2.2. For Physical Device use PC IP.
+  // IMPORTANT: For Android Emulator use 10.0.2.2. For Physical Device use PC IP: 127.0.0.1:8081 .
   // For Web use localhost.
   static String get baseUrl {
     if (kIsWeb) {
-      return 'http://127.0.0.1:8081/api'; // Use 127.0.0.1 to avoid CORS mixed content with debug server
+      return 'http://localhost:8081/api'; // Use 127.0.0.1 to avoid CORS mixed content with debug server
     }
-    return 'http://10.0.2.2:8081/api';
+    return 'http://localhost:8081/api';
   } 
 
   ApiClient() {

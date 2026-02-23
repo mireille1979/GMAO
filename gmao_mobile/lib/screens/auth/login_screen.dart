@@ -3,7 +3,8 @@ import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../models/user.dart';
 import '../manager/dashboard_screen.dart';
-import '../tech/task_list_screen.dart';
+import '../tech/task_list_screen.dart'; // Keep if needed or remove?
+import '../tech/tech_main_screen.dart';
 import '../admin/admin_dashboard_screen.dart';
 import '../client/client_dashboard_screen.dart';
 import 'forgot_password_screen.dart';
@@ -39,7 +40,7 @@ class _LoginScreenState extends State<LoginScreen> {
         } else if (auth.user?.role == Role.CLIENT) {
           destination = const ClientDashboardScreen();
         } else {
-          destination = const TaskListScreen();
+          destination = const TechMainScreen();
         }
 
         Navigator.pushReplacement(

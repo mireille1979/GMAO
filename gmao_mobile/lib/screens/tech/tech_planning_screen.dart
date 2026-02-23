@@ -4,6 +4,7 @@ import 'package:table_calendar/table_calendar.dart';
 import '../../providers/intervention_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../models/intervention.dart';
+import '../../utils/theme.dart';
 import 'intervention_details_screen.dart';
 
 class TechPlanningScreen extends StatefulWidget {
@@ -26,7 +27,11 @@ class _TechPlanningScreenState extends State<TechPlanningScreen> {
     super.initState();
     _selectedDay = _focusedDay;
     _selectedInterventions = ValueNotifier(_getInterventionsForDay(_selectedDay!));
-    _fetchEventsForMonth(_focusedDay);
+    
+    // Fetch initial data after build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _fetchEventsForMonth(_focusedDay);
+    });
   }
 
   @override
@@ -62,7 +67,12 @@ class _TechPlanningScreenState extends State<TechPlanningScreen> {
       setState(() {
         _events = newEvents;
         _isLoading = false;
-        _selectedInterventions.value = _getInterventionsForDay(_selectedDay!);
+         // Refresh list if selected day is in this month
+        if (_selectedDay != null && 
+            _selectedDay!.month == date.month && 
+            _selectedDay!.year == date.year) {
+           _selectedInterventions.value = _getInterventionsForDay(_selectedDay!);
+        }
       });
     }
   }
@@ -82,101 +92,192 @@ class _TechPlanningScreenState extends State<TechPlanningScreen> {
     }
   }
 
-  Color _getStatusColor(Statut statut) {
-    switch (statut) {
-      case Statut.PLANIFIEE: return Colors.blue;
-      case Statut.EN_COURS: return Colors.orange;
-      case Statut.TERMINEE: return Colors.green;
-      case Statut.ANNULEE: return Colors.red;
-      default: return Colors.grey;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppTheme.backgroundWhite,
       appBar: AppBar(
-        title: const Text('Mon Planning'),
-        backgroundColor: const Color(0xFF1565C0),
-        foregroundColor: Colors.white,
+        title: const Text('Mon Planning', style: TextStyle(color: AppTheme.textDark, fontWeight: FontWeight.bold)),
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: null,
+        automaticallyImplyLeading: false,
       ),
       body: Column(
         children: [
-          if (_isLoading) const LinearProgressIndicator(), 
-          TableCalendar<Intervention>(
-            firstDay: DateTime.utc(2020, 10, 16),
-            lastDay: DateTime.utc(2030, 3, 14),
-            focusedDay: _focusedDay,
-            calendarFormat: _calendarFormat,
-            selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
-            eventLoader: _getInterventionsForDay,
-            startingDayOfWeek: StartingDayOfWeek.monday,
-            calendarStyle: const CalendarStyle(
-              markerDecoration: BoxDecoration(
-                color: Color(0xFF1565C0),
-                shape: BoxShape.circle,
-              ),
+          Container(
+            margin: const EdgeInsets.fromLTRB(20, 10, 20, 20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(24),
+              boxShadow: [
+                BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 10, offset: const Offset(0, 4)),
+              ],
             ),
-            onDaySelected: _onDaySelected,
-            onFormatChanged: (format) {
-              if (_calendarFormat != format) {
-                setState(() => _calendarFormat = format);
-              }
-            },
-            onPageChanged: (focusedDay) {
-              _focusedDay = focusedDay;
-              _fetchEventsForMonth(focusedDay);
-            },
+            child: TableCalendar<Intervention>(
+              firstDay: DateTime.utc(2020, 10, 16),
+              lastDay: DateTime.utc(2030, 3, 14),
+              focusedDay: _focusedDay,
+              calendarFormat: _calendarFormat,
+              selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
+              eventLoader: _getInterventionsForDay,
+              startingDayOfWeek: StartingDayOfWeek.monday,
+              headerStyle: const HeaderStyle(
+                 formatButtonVisible: false,
+                 titleCentered: true,
+                 titleTextStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              ),
+              calendarStyle: const CalendarStyle(
+                markerDecoration: BoxDecoration(
+                  color: AppTheme.primaryOrange,
+                  shape: BoxShape.circle,
+                ),
+                selectedDecoration: BoxDecoration(
+                  gradient: AppTheme.orangeGradient,
+                  shape: BoxShape.circle,
+                ),
+                todayDecoration: BoxDecoration(
+                  color: Color(0xFFFFCC80), // Light Orange
+                  shape: BoxShape.circle,
+                ),
+              ),
+              onDaySelected: _onDaySelected,
+              onFormatChanged: (format) {
+                if (_calendarFormat != format) {
+                  setState(() => _calendarFormat = format);
+                }
+              },
+              onPageChanged: (focusedDay) {
+                _focusedDay = focusedDay;
+                _fetchEventsForMonth(focusedDay);
+              },
+            ),
           ),
-          const SizedBox(height: 8.0),
+          if (_isLoading) 
+             const Padding(
+               padding: EdgeInsets.symmetric(horizontal: 20),
+               child: LinearProgressIndicator(color: AppTheme.primaryOrange, backgroundColor: Color(0xFFFFCC80)),
+             ),
+             
+          const SizedBox(height: 10),
+          
           Expanded(
             child: ValueListenableBuilder<List<Intervention>>(
               valueListenable: _selectedInterventions,
               builder: (context, value, _) {
                 if (value.isEmpty) {
-                  return const Center(child: Text('Aucune intervention ce jour.'));
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.event_available, size: 64, color: Colors.grey.shade300),
+                        const SizedBox(height: 16),
+                        Text('Aucune intervention ce jour', style: TextStyle(color: Colors.grey.shade500)),
+                      ],
+                    ),
+                  );
                 }
-                return ListView.builder(
+                
+                return ListView.separated(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   itemCount: value.length,
+                  separatorBuilder: (_,__) => const SizedBox(height: 12),
                   itemBuilder: (context, index) {
                     final intervention = value[index];
-                    return Card(
-                      margin: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
-                      child: ListTile(
-                        leading: CircleAvatar(
-                          backgroundColor: _getStatusColor(intervention.statut),
-                          child: Icon(
-                            intervention.statut == Statut.TERMINEE ? Icons.check : Icons.build, 
-                            color: Colors.white,
-                            size: 20
-                          ),
-                        ),
-                        title: Text(
-                          intervention.titre, 
-                          style: const TextStyle(fontWeight: FontWeight.bold)
-                        ),
-                        subtitle: Text(
-                          "${intervention.batiment?.nom ?? 'N/A'} - ${intervention.equipement?.nom ?? 'N/A'}"
-                        ),
-                        trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => InterventionDetailsScreen(intervention: intervention),
-                            ),
-                          ).then((_) {
-                             _fetchEventsForMonth(_focusedDay); 
-                          });
-                        },
-                      ),
-                    );
+                    return _buildInterventionCard(intervention);
                   },
                 );
               },
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildInterventionCard(Intervention intervention) {
+    Color statusColor = Colors.grey;
+    if (intervention.statut == Statut.EN_COURS) statusColor = Colors.orange;
+    if (intervention.statut == Statut.TERMINEE) statusColor = Colors.green;
+    if (intervention.statut == Statut.PLANIFIEE) statusColor = Colors.blue;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 8, offset: const Offset(0, 2)),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(16),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => InterventionDetailsScreen(intervention: intervention),
+              ),
+            ).then((_) {
+               _fetchEventsForMonth(_focusedDay); 
+            });
+          },
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                // Time / Status Indicator
+                Container(
+                  width: 4,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: statusColor,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                
+                // Content
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        intervention.titre,
+                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: AppTheme.textDark),
+                      ),
+                      const SizedBox(height: 4),
+                      Row(
+                         children: [
+                           Icon(Icons.location_on_outlined, size: 14, color: Colors.grey.shade600),
+                           const SizedBox(width: 4),
+                           Expanded(
+                             child: Text(
+                               intervention.batiment?.nom ?? 'N/A',
+                               style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
+                               overflow: TextOverflow.ellipsis,
+                             ),
+                           ),
+                         ],
+                      ),
+                    ],
+                  ),
+                ),
+                
+                // Arrow
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade50,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Icon(Icons.chevron_right, color: AppTheme.textGrey),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
