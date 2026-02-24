@@ -1,4 +1,4 @@
-# 🏗️ GMAO Backend
+#  GMAO Backend
 
 API REST pour la gestion de maintenance assistée par ordinateur (GMAO).
 
